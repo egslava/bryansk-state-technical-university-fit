@@ -12,6 +12,9 @@ F	= 2.5;		# Мы всегда берём только Кремний
 NU 	= 1.0;	#Тоже жёстко забит
 DT 	= Tr - 295.5;# Температура по Брянску - температура по варианту. Это дельта-T
 
+
+PDKmr = {"2-10" => 0.5, "10-70" => 0.3 , ">70" => 0.15}[Dust];
+
 # результаты
 #Сmr_warm = 0; PDKrz_warm = 0;  M_warm = 0; PDV_warm = 0; Z_warm = 0; Xm_warm = 0;
 #Сmr_cold = 0; PDKrz_cold = 0;  M_cold = 0; PDV_cold = 0; Z_cold = 0; Xm_cold = 0;
@@ -208,7 +211,41 @@ PRINT
 	result 
 
 end
+
 Cmr_warm();
+
+# Приложение №3
+$step += 1;
+log <<COMMENT
+#{$step}. Po prilozheniyu #3 (tablica) nahodim predelno dopustimuyu koncentraciyu kremniya d rabochey zone:
+   smesi) dlya NAGRETIH vibrosov nahodim po formule (20)
+
+   PDK    =  #{PDKmr}
+      M.P.
+COMMENT
+
+
+# формула №4
+$step += 1;
+PDV_warm = ( PDKmr * (H ** 2 * ((V_1 * DT) ** (1.0/3.0)) )/
+             (A * F * @m9 * $n_warm * NU) ).round(2);
+log <<PRINT
+#{$step}. Nahodim PDV. dlya nagretix vibrosov po formule (4):
+   Formula 4:
+                           2                 1/3
+                PDK    *  H  * (V_1 * deltaT)
+                   M.P.
+   PDV =    ----------------------------------
+                     (A * F * m * n * nu)
+
+
+                                   2                 1/3
+                   #{PDKmr}  * #{H}  * (#{V_1} * #{DT})
+   PDV =    -------------------------------------------------   = #{PDV_warm}
+                  (#{A} * #{F} * #{@m9} * #{$n_warm} * #{NU})
+PRINT
+
+
 
 # формула №21
 def Vm_cold(_W0, _H)
